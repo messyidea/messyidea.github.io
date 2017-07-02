@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>splay | Messyidea&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="splay 是一种很灵活的数据结构。它是动态树的基础，动态树是维护树上数据的神器啊~ splay是一种特殊的二叉查找树，与平衡树不同，不是按照判断高度来降低深度的。每次插入一个点，或者每次处理一个点，都需要进行一次splay操作把该点移动到根，根据数据的局部性原理，可以使处理变得快一点。 ###它有以下规则：（p是x的parent节点）  当p为根节点时，进行zip step操作。 当x是p的左孩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="splay">
+<meta property="og:url" content="http://messyidea.com/2015/03/25/Algorithm/splay/index.html">
+<meta property="og:site_name" content="Messyidea&#39;s blog">
+<meta property="og:description" content="splay 是一种很灵活的数据结构。它是动态树的基础，动态树是维护树上数据的神器啊~ splay是一种特殊的二叉查找树，与平衡树不同，不是按照判断高度来降低深度的。每次插入一个点，或者每次处理一个点，都需要进行一次splay操作把该点移动到根，根据数据的局部性原理，可以使处理变得快一点。 ###它有以下规则：（p是x的parent节点）  当p为根节点时，进行zip step操作。 当x是p的左孩">
+<meta property="og:image" content="http://i.imgur.com/LIJFo8K.png">
+<meta property="og:image" content="http://i.imgur.com/xlZgShC.png">
+<meta property="og:image" content="http://i.imgur.com/wEv0Xin.png">
+<meta property="og:updated_time" content="2017-07-02T08:31:59.136Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="splay">
+<meta name="twitter:description" content="splay 是一种很灵活的数据结构。它是动态树的基础，动态树是维护树上数据的神器啊~ splay是一种特殊的二叉查找树，与平衡树不同，不是按照判断高度来降低深度的。每次插入一个点，或者每次处理一个点，都需要进行一次splay操作把该点移动到根，根据数据的局部性原理，可以使处理变得快一点。 ###它有以下规则：（p是x的parent节点）  当p为根节点时，进行zip step操作。 当x是p的左孩">
+<meta name="twitter:image" content="http://i.imgur.com/LIJFo8K.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Messyidea&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Messyidea&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/Projects">Projects</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="messyidea.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Algorithm/splay" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/03/25/Algorithm/splay/" class="article-date">
+  <time datetime="2015-03-26T02:47:46.000Z" itemprop="datePublished">3月 25 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      splay
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>splay 是一种很灵活的数据结构。它是动态树的基础，动态树是维护树上数据的神器啊~</p>
+<p>splay是一种特殊的二叉查找树，与平衡树不同，不是按照判断高度来降低深度的。<br>每次插入一个点，或者每次处理一个点，都需要进行一次splay操作把该点移动到根，根据数据的局部性原理，可以使处理变得快一点。</p>
+<p>###它有以下规则：（p是x的parent节点）<br><img src="http://i.imgur.com/LIJFo8K.png" alt="zig"></p>
+<ul>
+<li>当p为根节点时，进行zip step操作。</li>
+<li>当x是p的左孩子时，对x右旋；</li>
+<li>当x是p的右孩子时，对x左旋。</li>
+</ul>
+<p><img src="http://i.imgur.com/xlZgShC.png" alt="zig-zig"></p>
+<ul>
+<li>当p不是根节点，且x和p不同为左孩子或右孩子时，进行Zig-Zag操作。</li>
+<li>当p为左孩子，x为右孩子时，将x左旋后再右旋。</li>
+<li>当p为右孩子，x为左孩子时，将x右旋后再左旋。</li>
+</ul>
+<p><img src="http://i.imgur.com/wEv0Xin.png" alt="zig-zag"></p>
+<ul>
+<li>当p不是根节点，且x和p不同为左孩子或右孩子时，进行Zig-Zag操作。</li>
+<li>当p为左孩子，x为右孩子时，将x左旋后再右旋。</li>
+<li>当p为右孩子，x为左孩子时，将x右旋后再左旋。</li>
+</ul>
+<p>splay可以替代线段树进行更加复杂的区间操作，但是一般如果不是线段树解决不了的问题，尽量不能用splay做，因为splay常数比线段树大很多。</p>
+<p>splay的维护懒惰标记也很巧妙，每次旋转的时候先把标记下降，然后旋转，旋转之后只有该节点原来的父亲的数据会发生变化，需要pushup一下，当前节点的数据可以等位置固定了之后再维护。</p>
+<p>如果要计算一段区间内的值，可以先把该段位置的前一个节点splay到根，然后把该段位置的后一个节点splay到root,这样的话，后一个的节点的左子树就是该段区间所维护的值了。</p>
+<p>下面是一个实现：</p>
+<p><a href="http://acm.hdu.edu.cn/showproblem.php?pid=1166" target="_blank" rel="external">题目链接</a></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/***********************************************\</span></div><div class="line"> |Author: YMC</div><div class="line"> |Created Time: 2015/3/25 21:34:19</div><div class="line"> |File Name: hdu1166.cpp</div><div class="line"> |Description: </div><div class="line">\***********************************************/</div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdlib&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;list&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;map&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;set&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;deque&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;queue&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> L(rt) (rt&lt;&lt;1)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> R(rt) (rt&lt;&lt;1|1)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> mset(l,n) memset(l,n,sizeof(l))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> rep(i,n) for(int i=0;i&lt;n;++i)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> maxx(a) memset(a, 0x3f, sizeof(a))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> zero(a) memset(a, 0, sizeof(a))</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> srep(i,n) for(int i = 1;i &lt;= n;i ++)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MP make_pair</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> inf=<span class="number">0x3f3f3f3f</span> ;</div><div class="line"><span class="keyword">const</span> <span class="keyword">double</span> eps=<span class="number">1e-8</span> ;</div><div class="line"><span class="keyword">const</span> <span class="keyword">double</span> pi=<span class="built_in">acos</span> (<span class="number">-1.0</span>);</div><div class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> maxn 110000</span></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span> &#123;</span></div><div class="line">    <span class="keyword">int</span> val;</div><div class="line">    <span class="keyword">int</span> sum;</div><div class="line">    <span class="keyword">int</span> add;</div><div class="line">    Node* ch[<span class="number">2</span>], *f;</div><div class="line">    <span class="keyword">int</span> size;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</div><div class="line">        f = ch[<span class="number">0</span>] = ch[<span class="number">1</span>] = <span class="literal">NULL</span>; size = <span class="number">1</span>;</div><div class="line">        add = <span class="number">0</span>;    <span class="comment">//延迟标记</span></div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">rot</span><span class="params">(<span class="keyword">int</span> c)</span> </span>&#123;</div><div class="line">        Node *y = f, *z = y-&gt;f;</div><div class="line">        <span class="comment">//y-&gt;push_down(); push_down();</span></div><div class="line">        y-&gt;ch[!c] = ch[c];  <span class="keyword">if</span>(ch[c]) ch[c]-&gt;f = y;</div><div class="line">        f = z;</div><div class="line">        <span class="keyword">if</span>(z) &#123;</div><div class="line">            <span class="keyword">if</span>(y == z-&gt;ch[<span class="number">0</span>])   z-&gt;ch[<span class="number">0</span>] = <span class="keyword">this</span>;</div><div class="line">            <span class="keyword">else</span> z-&gt;ch[<span class="number">1</span>] = <span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line">        ch[c] = y;  y-&gt;f = <span class="keyword">this</span>;</div><div class="line">        y-&gt;update();    <span class="comment">//自己暂时不更新,y是原来的fa,在自己下面</span></div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">splay</span><span class="params">(Node *fa)</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span>(pushdown(); f != fa; ) &#123;    <span class="comment">//每次自己要旋转,则需要把标记传递下去,子标记不受影响。</span></div><div class="line">            <span class="keyword">if</span>(f-&gt;f == fa) &#123;</div><div class="line">                <span class="keyword">if</span>(f-&gt;ch[<span class="number">0</span>] == <span class="keyword">this</span>) rot(<span class="number">1</span>);</div><div class="line">                <span class="keyword">else</span> rot(<span class="number">0</span>);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                Node *y = f, *z = y-&gt;f;</div><div class="line">                <span class="keyword">if</span>(y-&gt;ch[<span class="number">0</span>] == <span class="keyword">this</span>) &#123;</div><div class="line">                    <span class="keyword">if</span>(z-&gt;ch[<span class="number">0</span>] == y) &#123;</div><div class="line">                        y-&gt;rot(<span class="number">1</span>); rot(<span class="number">1</span>);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        rot(<span class="number">1</span>); rot(<span class="number">0</span>);</div><div class="line">                    &#125;</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">if</span>(z-&gt;ch[<span class="number">0</span>] != y) &#123;</div><div class="line">                        y-&gt;rot(<span class="number">0</span>); rot(<span class="number">0</span>);</div><div class="line">                    &#125; <span class="keyword">else</span> &#123;</div><div class="line">                        rot(<span class="number">0</span>); rot(<span class="number">1</span>);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        update();   <span class="comment">//本节点最后更新</span></div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pushdown</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(add) &#123;</div><div class="line">            <span class="keyword">if</span>(ch[<span class="number">0</span>]) &#123;</div><div class="line">                ch[<span class="number">0</span>]-&gt;add += add;</div><div class="line">                ch[<span class="number">0</span>]-&gt;val += add;</div><div class="line">                ch[<span class="number">0</span>]-&gt;sum += ch[<span class="number">0</span>]-&gt;size * add;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span>(ch[<span class="number">1</span>]) &#123;</div><div class="line">                ch[<span class="number">1</span>]-&gt;add += add;</div><div class="line">                ch[<span class="number">1</span>]-&gt;val += add;</div><div class="line">                ch[<span class="number">1</span>]-&gt;sum += ch[<span class="number">1</span>]-&gt;size * add;</div><div class="line">            &#125;</div><div class="line">            add = <span class="number">0</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">update</span><span class="params">()</span> </span>&#123;</div><div class="line">        size = <span class="number">1</span>;</div><div class="line">        <span class="keyword">if</span>(ch[<span class="number">0</span>]) size += ch[<span class="number">0</span>]-&gt;size;</div><div class="line">        <span class="keyword">if</span>(ch[<span class="number">1</span>]) size += ch[<span class="number">1</span>]-&gt;size;</div><div class="line">        sum = val;</div><div class="line">        <span class="keyword">if</span>(ch[<span class="number">0</span>]) sum += ch[<span class="number">0</span>]-&gt;sum;</div><div class="line">        <span class="keyword">if</span>(ch[<span class="number">1</span>]) sum += ch[<span class="number">1</span>]-&gt;sum;</div><div class="line">    &#125;</div><div class="line">    <span class="function">Node* <span class="title">find</span><span class="params">(<span class="keyword">int</span> r)</span> </span>&#123;</div><div class="line">        pushdown();     <span class="comment">//找的时候要维护一些信息。不然找到的节点的信息错误</span></div><div class="line">        <span class="keyword">int</span> L = <span class="number">0</span>; <span class="keyword">if</span>(ch[<span class="number">0</span>]) L += ch[<span class="number">0</span>]-&gt;size;</div><div class="line">        <span class="keyword">if</span>(r &lt;= L) <span class="keyword">return</span> ch[<span class="number">0</span>]-&gt;find(r);</div><div class="line">        <span class="keyword">if</span>(r == L+<span class="number">1</span>) <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">        <span class="keyword">return</span> ch[<span class="number">1</span>]-&gt;find(r-L<span class="number">-1</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;node[maxn];</div><div class="line"><span class="keyword">int</span> e;</div><div class="line"><span class="keyword">inline</span> Node* _alloc() &#123;</div><div class="line">    node[e].init(); <span class="keyword">return</span> &amp;node[e++];</div><div class="line">&#125;</div><div class="line"><span class="keyword">int</span> da[maxn];</div><div class="line">Node* _make(<span class="keyword">int</span> l, <span class="keyword">int</span> r) &#123;</div><div class="line">    <span class="keyword">if</span>(l &gt; r) <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">    <span class="keyword">int</span> mid = l + r &gt;&gt; <span class="number">1</span>;   <span class="comment">//从中间开始建，树的深度最小</span></div><div class="line">    Node *p = _alloc(); p-&gt;val = da[mid];</div><div class="line">    p-&gt;ch[<span class="number">0</span>] = _make(l, mid<span class="number">-1</span>); <span class="keyword">if</span>(p-&gt;ch[<span class="number">0</span>]) p-&gt;ch[<span class="number">0</span>]-&gt;f = p;</div><div class="line">    p-&gt;ch[<span class="number">1</span>] = _make(mid+<span class="number">1</span>, r); <span class="keyword">if</span>(p-&gt;ch[<span class="number">1</span>]) p-&gt;ch[<span class="number">1</span>]-&gt;f = p;</div><div class="line">    p-&gt;update();    <span class="comment">//子节点更新好之后再更新自己。</span></div><div class="line">    <span class="keyword">return</span> p;</div><div class="line">&#125;</div><div class="line"><span class="keyword">char</span> op[<span class="number">10</span>];</div><div class="line"><span class="keyword">int</span> a, b, c, n;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">//freopen("input.txt","r",stdin); </span></div><div class="line">    <span class="keyword">int</span> T;</div><div class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;T);</div><div class="line">    <span class="keyword">int</span> cas = <span class="number">0</span>;</div><div class="line">    <span class="keyword">while</span>(T--) &#123;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"Case %d:\n"</span>, ++cas);</div><div class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;n);</div><div class="line">        srep(i,n) <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;da[i]);</div><div class="line">        da[<span class="number">0</span>] = da[n+<span class="number">1</span>] = <span class="number">0</span>;</div><div class="line">        e = <span class="number">0</span>;</div><div class="line">        Node *root = _make(<span class="number">0</span>, n+<span class="number">1</span>), *tp;</div><div class="line">        <span class="keyword">while</span>(<span class="built_in">scanf</span>(<span class="string">"%s"</span>,op) != EOF) &#123;</div><div class="line">            <span class="keyword">if</span>(op[<span class="number">0</span>] == <span class="string">'Q'</span>) &#123;</div><div class="line">                <span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;a,&amp;b); a++; b++;</div><div class="line">                tp = root-&gt;find(a - <span class="number">1</span>);</div><div class="line">                tp-&gt;splay(<span class="literal">NULL</span>); root = tp;</div><div class="line">                tp = root-&gt;find(b + <span class="number">1</span>);</div><div class="line">                tp-&gt;splay(root);</div><div class="line">                tp = tp-&gt;ch[<span class="number">0</span>];</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"%d\n"</span>,tp-&gt;sum);</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(op[<span class="number">0</span>] == <span class="string">'A'</span>) &#123;</div><div class="line">                <span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;a,&amp;b); a++;</div><div class="line">                tp = root-&gt;find(a<span class="number">-1</span>);</div><div class="line">                tp-&gt;splay(<span class="literal">NULL</span>);    root = tp;</div><div class="line">                tp = root-&gt;find(a+<span class="number">1</span>);</div><div class="line">                tp-&gt;splay(root);</div><div class="line">                tp = tp-&gt;ch[<span class="number">0</span>];</div><div class="line">                tp-&gt;sum += b;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>(op[<span class="number">0</span>] == <span class="string">'S'</span>) &#123;</div><div class="line">                <span class="built_in">scanf</span>(<span class="string">"%d %d"</span>,&amp;a,&amp;b); a++;</div><div class="line">                tp = root-&gt;find(a<span class="number">-1</span>);</div><div class="line">                tp-&gt;splay(<span class="literal">NULL</span>);    root = tp;</div><div class="line">                tp = root-&gt;find(a+<span class="number">1</span>);</div><div class="line">                tp-&gt;splay(root);</div><div class="line">                tp = tp-&gt;ch[<span class="number">0</span>];</div><div class="line">                tp-&gt;sum -= b;</div><div class="line">            &#125; <span class="keyword">else</span> <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/03/25/Algorithm/splay/" data-id="cj4mgqu8i0010nw5194kpdsic" class="article-share-link" data-share="baidu" data-title="splay">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/03/25/Algorithm/splay/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/03/26/Algorithm/并查集/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          并查集
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/03/23/Algorithm/树链剖分/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">树链剖分</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux-C/">Linux C</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mess/">Mess</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a><span class="category-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Opengrok/">Opengrok</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/System/">System</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Warming/">Warming</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aria2c/">aria2c</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gogs/">gogs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-entrypt/">let's entrypt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life-now/">life now</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/交叉编译/">交叉编译</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树/">树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树莓派/">树莓派</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线段树/">线段树</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Opengrok/" style="font-size: 10px;">Opengrok</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/Warming/" style="font-size: 20px;">Warming</a> <a href="/tags/aria2c/" style="font-size: 10px;">aria2c</a> <a href="/tags/gdb/" style="font-size: 10px;">gdb</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/gogs/" style="font-size: 10px;">gogs</a> <a href="/tags/let-s-entrypt/" style="font-size: 10px;">let's entrypt</a> <a href="/tags/life-now/" style="font-size: 10px;">life now</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a> <a href="/tags/tools/" style="font-size: 10px;">tools</a> <a href="/tags/交叉编译/" style="font-size: 10px;">交叉编译</a> <a href="/tags/树/" style="font-size: 10px;">树</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/线段树/" style="font-size: 10px;">线段树</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/">Hasee Z7 sl7d3 archlinux 安装笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/17/git-repo-永久删除大文件/">git repo 永久删除大文件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/29/Linux-的-ACL/">Linux 的 ACL</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/20/Opengrok-优秀的代码阅读工具/">Opengrok 优秀的代码阅读工具</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/01/交叉编译树莓派的-aria2c/">交叉编译树莓派的 aria2c</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 messyidea<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/Projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'messyidea';
+  
+  var disqus_url = 'http://messyidea.com/2015/03/25/Algorithm/splay/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

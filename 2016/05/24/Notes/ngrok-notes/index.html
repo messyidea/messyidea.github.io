@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ngrok 源码解析 | Messyidea&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ngrok是一个内网穿透工具，主要用途是让用户能够通过一台ngrok的中转服务器访问在内网中的一台机器。 用途有点类似与端口映射，要把一台内网中的机器的端口映射到具有公网ip的另一台机器的端口。 假如被映射的机器不在内网，那么可以直接通过映射的机器向被映射的机器创建链接转发来达到目的，但是如果被映射的机器在一个内网的话，就要复杂很多了。 首先需要内网的机器和外网的机器维护一条链接（因为外网的机器不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ngrok 源码解析">
+<meta property="og:url" content="http://messyidea.com/2016/05/24/Notes/ngrok-notes/index.html">
+<meta property="og:site_name" content="Messyidea&#39;s blog">
+<meta property="og:description" content="ngrok是一个内网穿透工具，主要用途是让用户能够通过一台ngrok的中转服务器访问在内网中的一台机器。 用途有点类似与端口映射，要把一台内网中的机器的端口映射到具有公网ip的另一台机器的端口。 假如被映射的机器不在内网，那么可以直接通过映射的机器向被映射的机器创建链接转发来达到目的，但是如果被映射的机器在一个内网的话，就要复杂很多了。 首先需要内网的机器和外网的机器维护一条链接（因为外网的机器不">
+<meta property="og:updated_time" content="2017-07-02T08:31:59.136Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ngrok 源码解析">
+<meta name="twitter:description" content="ngrok是一个内网穿透工具，主要用途是让用户能够通过一台ngrok的中转服务器访问在内网中的一台机器。 用途有点类似与端口映射，要把一台内网中的机器的端口映射到具有公网ip的另一台机器的端口。 假如被映射的机器不在内网，那么可以直接通过映射的机器向被映射的机器创建链接转发来达到目的，但是如果被映射的机器在一个内网的话，就要复杂很多了。 首先需要内网的机器和外网的机器维护一条链接（因为外网的机器不">
+  
+    <link rel="alternative" href="/atom.xml" title="Messyidea&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Messyidea&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/Projects">Projects</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="messyidea.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Notes/ngrok-notes" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/24/Notes/ngrok-notes/" class="article-date">
+  <time datetime="2016-05-24T23:23:30.000Z" itemprop="datePublished">5月 24 2016</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ngrok 源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ngrok是一个内网穿透工具，主要用途是让用户能够通过一台ngrok的中转服务器访问在内网中的一台机器。</p>
+<p>用途有点类似与端口映射，要把一台内网中的机器的端口映射到具有公网ip的另一台机器的端口。</p>
+<p>假如被映射的机器不在内网，那么可以直接通过映射的机器向被映射的机器创建链接转发来达到目的，但是如果被映射的机器在一个内网的话，就要复杂很多了。</p>
+<p>首先需要内网的机器和外网的机器维护一条链接（因为外网的机器不能够主动连接内网的机器），为了避免链接的中断，需要通过心跳等途径维持链接。这条链接保证了外网机器能够随时和内网通信。</p>
+<p>当然，单单一条链接是不够的，一般我们访问一个网页都会打开5-10个tcp链接，如果这些链接都阻塞在同一条链接上的话，性能会受很大的影响。<br>为了保证性能，外网机器和内网的机器可以制定一种协议，外网的机器可以通过协议请求内网的机器创建多条联通外网机器的链接以供传输。这样就可以保证请求可以被并行地响应，以保证性能。ngrok就是这么做的。</p>
+<p>下面来看一下ngrok的执行流程（主要讲一下tcp的映射，省略了http,https和认证过程）。</p>
+<p>ngrok主要分为ngrok和ngrokd，ngrok是客户端，ngrokd是服务端。</p>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>ngrokd启动的时候会执行一个tunnelListener函数，用来监听客户端的链接。<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//server main.go</span></div><div class="line">tunnelListener(opts.tunnelAddr, tlsConfig)</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">tunnelListener</span><span class="params">(addr <span class="keyword">string</span>, tlsConfig *tls.Config)</span></span> &#123;</div><div class="line">	<span class="comment">// listen for incoming connections</span></div><div class="line">	listener, err := conn.Listen(addr, <span class="string">"tun"</span>, tlsConfig)</div><div class="line">	<span class="comment">//...</span></div><div class="line">	log.Info(<span class="string">"Listening for control and proxy connections on %s"</span>, listener.Addr.String())</div><div class="line">	</div><div class="line">	<span class="keyword">for</span> c := <span class="keyword">range</span> listener.Conns &#123;</div><div class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(tunnelConn conn.Conn)</span></span> &#123;</div><div class="line">			</div><div class="line">			<span class="keyword">var</span> rawMsg msg.Message</div><div class="line">			<span class="keyword">if</span> rawMsg, err = msg.ReadMsg(tunnelConn); err != <span class="literal">nil</span> &#123;</div><div class="line">				tunnelConn.Warn(<span class="string">"Failed to read message: %v"</span>, err)</div><div class="line">				tunnelConn.Close()</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="keyword">switch</span> m := rawMsg.(<span class="keyword">type</span>) &#123;</div><div class="line">			<span class="keyword">case</span> *msg.Auth:</div><div class="line">				NewControl(tunnelConn, m)</div><div class="line"></div><div class="line">			<span class="keyword">case</span> *msg.RegProxy:</div><div class="line">				NewProxy(tunnelConn, m)</div><div class="line"></div><div class="line">			<span class="keyword">default</span>:</div><div class="line">				tunnelConn.Close()</div><div class="line">			&#125;</div><div class="line">		&#125;(c)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>中间有部分不需要的东西被删了。tunnelListener用来监听客户端。当有客户端连接的时候，它会先接收一个rawMsg（既定的协议），如果rawMsg是Auth类型的，那么就代表有新的客户端要连接了，那么就通过NewControl创建了一Control。</p>
+<p>这个Control是一条进行控制的链接，是需要一直维护的。所有的控制信息都是通过这条链接来传递的。Control结构如下：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Control <span class="keyword">struct</span> &#123;</div><div class="line">	<span class="comment">// auth message</span></div><div class="line">	auth *msg.Auth</div><div class="line"></div><div class="line">	<span class="comment">// actual connection</span></div><div class="line">	conn conn.Conn</div><div class="line"></div><div class="line">	<span class="comment">// put a message in this channel to send it over</span></div><div class="line">	<span class="comment">// conn to the client</span></div><div class="line">	out <span class="keyword">chan</span> (msg.Message)</div><div class="line"></div><div class="line">	<span class="comment">// read from this channel to get the next message sent</span></div><div class="line">	<span class="comment">// to us over conn by the client</span></div><div class="line">	in <span class="keyword">chan</span> (msg.Message)</div><div class="line"></div><div class="line">	<span class="comment">// the last time we received a ping from the client - for heartbeats</span></div><div class="line">	lastPing time.Time</div><div class="line"></div><div class="line">	<span class="comment">// all of the tunnels this control connection handles</span></div><div class="line">	tunnels []*Tunnel</div><div class="line"></div><div class="line">	<span class="comment">// proxy connections</span></div><div class="line">	proxies <span class="keyword">chan</span> conn.Conn</div><div class="line"></div><div class="line">	<span class="comment">// identifier</span></div><div class="line">	id <span class="keyword">string</span></div><div class="line"></div><div class="line">	<span class="comment">// synchronizer for controlled shutdown of writer()</span></div><div class="line">	writerShutdown *util.Shutdown</div><div class="line"></div><div class="line">	<span class="comment">// synchronizer for controlled shutdown of reader()</span></div><div class="line">	readerShutdown *util.Shutdown</div><div class="line"></div><div class="line">	<span class="comment">// synchronizer for controlled shutdown of manager()</span></div><div class="line">	managerShutdown *util.Shutdown</div><div class="line"></div><div class="line">	<span class="comment">// synchronizer for controller shutdown of entire Control</span></div><div class="line">	shutdown *util.Shutdown</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中，auth是认证信息，ctlConn指的就是控制链接本身。out和in控制着数据的读入和读出，所有加入out的msg都会被发送到对应的客户端，所有ctlConn接收到的msg都会被放入in。分别由reader和writer这两个goroutine实现。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Control)</span> <span class="title">writer</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// write messages to the control channel</span></div><div class="line">	<span class="keyword">for</span> m := <span class="keyword">range</span> c.out &#123;</div><div class="line">		c.conn.SetWriteDeadline(time.Now().Add(controlWriteTimeout))</div><div class="line">		<span class="keyword">if</span> err := msg.WriteMsg(c.conn, m); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(err)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Control)</span> <span class="title">reader</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// read messages from the control channel</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="keyword">if</span> msg, err := msg.ReadMsg(c.conn); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">if</span> err == io.EOF &#123;</div><div class="line">				c.conn.Info(<span class="string">"EOF"</span>)</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125; <span class="keyword">else</span> &#123;</div><div class="line">				<span class="built_in">panic</span>(err)</div><div class="line">			&#125;</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="comment">// this can also panic during shutdown</span></div><div class="line">			c.in &lt;- msg</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>还有两个重要的元素是proxies和tunnel。tunnel存放的是外网机器监听外部连接的链接，proxies存放的是外网机器访问内网的链接。</p>
+<p>Control建立之后会随机生成一个id，这个id代表着对应的client的id。生成id之后Control会把这个id相关的信息发送给客户端，之后这个id就代表着客户端了。<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">c.out &lt;- &amp;msg.AuthResp&#123;</div><div class="line">		Version:   version.Proto,</div><div class="line">		MmVersion: version.MajorMinor(),</div><div class="line">		ClientId:  c.id,</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>客户端接受到这个id信息之后，会在以后的消息中带上这个id，方便服务端确认是哪个客户端。<br>为了方便服务端通过id找到对应的Control，服务端会把id和对应Control放在一个map里面，这个map就是controlRegistry。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">controlRegistry.Add(c.id, c);</div></pre></td></tr></table></figure>
+<p>之后，Control会监听从客户端发来的请求（这个时候服务端还没建立端口映射，需要客户端发相应的请求：我要吧自己的什么端口映射到服务端的什么端口上）<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Control)</span> <span class="title">manager</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="keyword">select</span> &#123;</div><div class="line">		<span class="keyword">case</span> mRaw, ok := &lt;-c.in:</div><div class="line">			<span class="comment">// c.in closes to indicate shutdown</span></div><div class="line">			<span class="keyword">if</span> !ok &#123;</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="keyword">switch</span> m := mRaw.(<span class="keyword">type</span>) &#123;</div><div class="line">			<span class="keyword">case</span> *msg.ReqTunnel:</div><div class="line">				c.registerTunnel(m)</div><div class="line"></div><div class="line">			<span class="keyword">case</span> *msg.Ping:</div><div class="line">				c.lastPing = time.Now()</div><div class="line">				c.out &lt;- &amp;msg.Pong&#123;&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中，msg.Ping是心跳信息，msg.ReqTunnel是客户端请求映射的信息。服务端接收到客户端请求，会创建一个新的tunnel</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Register a new tunnel on this control connection</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Control)</span> <span class="title">registerTunnel</span><span class="params">(rawTunnelReq *msg.ReqTunnel)</span></span> &#123;</div><div class="line">	<span class="keyword">for</span> _, proto := <span class="keyword">range</span> strings.Split(rawTunnelReq.Protocol, <span class="string">"+"</span>) &#123;</div><div class="line">		tunnelReq := *rawTunnelReq</div><div class="line">		tunnelReq.Protocol = proto</div><div class="line"></div><div class="line">		c.conn.Debug(<span class="string">"Registering new tunnel"</span>)</div><div class="line">		t, err := NewTunnel(&amp;tunnelReq, c)</div><div class="line"></div><div class="line">		<span class="comment">// add it to the list of tunnels</span></div><div class="line">		c.tunnels = <span class="built_in">append</span>(c.tunnels, t)</div><div class="line"></div><div class="line">		<span class="comment">// acknowledge success</span></div><div class="line">		c.out &lt;- &amp;msg.NewTunnel&#123;</div><div class="line">			Url:      t.url,</div><div class="line">			Protocol: proto,</div><div class="line">			ReqId:    rawTunnelReq.ReqId,</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		rawTunnelReq.Hostname = strings.Replace(t.url, proto+<span class="string">"://"</span>, <span class="string">""</span>, <span class="number">1</span>)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//创建tunnel</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTunnel</span><span class="params">(m *msg.ReqTunnel, ctl *Control)</span> <span class="params">(t *Tunnel, err error)</span></span> &#123;</div><div class="line">	t = &amp;Tunnel&#123;</div><div class="line">		req:    m,</div><div class="line">		start:  time.Now(),</div><div class="line">		ctl:    ctl,</div><div class="line">		Logger: log.NewPrefixLogger(),</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	proto := t.req.Protocol</div><div class="line">	<span class="keyword">switch</span> proto &#123;</div><div class="line">	<span class="keyword">case</span> <span class="string">"tcp"</span>:</div><div class="line">		bindTcp := <span class="function"><span class="keyword">func</span><span class="params">(port <span class="keyword">int</span>)</span> <span class="title">error</span></span> &#123;</div><div class="line">			<span class="keyword">if</span> t.listener, err = net.ListenTCP(<span class="string">"tcp"</span>, &amp;net.TCPAddr&#123;IP: net.ParseIP(<span class="string">"0.0.0.0"</span>), Port: port&#125;); err != <span class="literal">nil</span> &#123;</div><div class="line">				err = t.ctl.conn.Error(<span class="string">"Error binding TCP listener: %v"</span>, err)</div><div class="line">				<span class="keyword">return</span> err</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="comment">// create the url</span></div><div class="line">			addr := t.listener.Addr().(*net.TCPAddr)</div><div class="line">			t.url = fmt.Sprintf(<span class="string">"tcp://%s:%d"</span>, opts.domain, addr.Port)</div><div class="line"></div><div class="line">			<span class="comment">// register it</span></div><div class="line">			<span class="keyword">if</span> err = tunnelRegistry.RegisterAndCache(t.url, t); err != <span class="literal">nil</span> &#123;</div><div class="line">				<span class="comment">// This should never be possible because the OS will</span></div><div class="line">				<span class="comment">// only assign available ports to us.</span></div><div class="line">				t.listener.Close()</div><div class="line">				err = fmt.Errorf(<span class="string">"TCP listener bound, but failed to register %s"</span>, t.url)</div><div class="line">				<span class="keyword">return</span> err</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="keyword">go</span> t.listenTcp(t.listener)</div><div class="line">			<span class="keyword">return</span> <span class="literal">nil</span></div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		</div><div class="line">		</div><div class="line"><span class="comment">// Listens for new public tcp connections from the internet.</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tunnel)</span> <span class="title">listenTcp</span><span class="params">(listener *net.TCPListener)</span></span> &#123;</div><div class="line">		<span class="comment">// accept public connections</span></div><div class="line">		tcpConn, err := listener.AcceptTCP()</div><div class="line"></div><div class="line">		conn := conn.Wrap(tcpConn, <span class="string">"pub"</span>)</div><div class="line">		conn.AddLogPrefix(t.Id())</div><div class="line">		conn.Info(<span class="string">"New connection from %v"</span>, conn.RemoteAddr())</div><div class="line"></div><div class="line">		<span class="keyword">go</span> t.HandlePublicConnection(conn)</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Control建立一个tunnel之后会发送一个msg.NewTunnel信息给客户端，代表tunnel已经建立。这个tunnel会被放在Control的tunnels结构中去。新建Tunnel的过程中，会把url和tunnel的信息注册到一个map中，方便通过url获取到对应的tunnle，这个map是tunnelRegistry。</p>
+<p>tunnel建立之后，基本的工作都已经做完了，只需要在tunnel里面监听外网的链接就行了。下面来看一下对外网链接的处理。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Tunnel)</span> <span class="title">HandlePublicConnection</span><span class="params">(publicConn conn.Conn)</span></span> &#123;</div><div class="line"></div><div class="line">	<span class="keyword">var</span> proxyConn conn.Conn</div><div class="line">	<span class="keyword">var</span> err error</div><div class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; (<span class="number">2</span> * proxyMaxPoolSize); i++ &#123;</div><div class="line">		<span class="comment">// get a proxy connection</span></div><div class="line">		<span class="keyword">if</span> proxyConn, err = t.ctl.GetProxy(); err != <span class="literal">nil</span> &#123;</div><div class="line">			t.Warn(<span class="string">"Failed to get proxy connection: %v"</span>, err)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">		<span class="comment">// tell the client we're going to start using this proxy connection</span></div><div class="line">		startPxyMsg := &amp;msg.StartProxy&#123;</div><div class="line">			Url:        t.url,</div><div class="line">			ClientAddr: publicConn.RemoteAddr().String(),</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">if</span> err = msg.WriteMsg(proxyConn, startPxyMsg); err != <span class="literal">nil</span> &#123;</div><div class="line">			proxyConn.Warn(<span class="string">"Failed to write StartProxyMessage: %v, attempt %d"</span>, err, i)</div><div class="line">			proxyConn.Close()</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="comment">// success</span></div><div class="line">			<span class="keyword">break</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// join the public and proxy connections</span></div><div class="line">	bytesIn, bytesOut := conn.Join(publicConn, proxyConn)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>因为现在服务端和客户端只有一条链接（Control），这条链接主要是传送相关的控制消息，为了传输数据，请求客户端创建proxy链接。这个操作在 t.ctl.GetProxy()中完成。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Control)</span> <span class="title">GetProxy</span><span class="params">()</span> <span class="params">(proxyConn conn.Conn, err error)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> ok <span class="keyword">bool</span></div><div class="line"></div><div class="line">	<span class="comment">// get a proxy connection from the pool</span></div><div class="line">	<span class="keyword">select</span> &#123;</div><div class="line">	<span class="keyword">case</span> proxyConn, ok = &lt;-c.proxies:</div><div class="line">		<span class="keyword">if</span> !ok &#123;</div><div class="line">			err = fmt.Errorf(<span class="string">"No proxy connections available, control is closing"</span>)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	<span class="keyword">default</span>:</div><div class="line">		<span class="comment">// no proxy available in the pool, ask for one over the control channel</span></div><div class="line">		c.conn.Debug(<span class="string">"No proxy in pool, requesting proxy from control . . ."</span>)</div><div class="line">		<span class="keyword">if</span> err = util.PanicToError(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.out &lt;- &amp;msg.ReqProxy&#123;&#125; &#125;); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">select</span> &#123;</div><div class="line">		<span class="keyword">case</span> proxyConn, ok = &lt;-c.proxies:</div><div class="line">			<span class="keyword">if</span> !ok &#123;</div><div class="line">				err = fmt.Errorf(<span class="string">"No proxy connections available, control is closing"</span>)</div><div class="line">				<span class="keyword">return</span></div><div class="line">			&#125;</div><div class="line"></div><div class="line">		<span class="keyword">case</span> &lt;-time.After(pingTimeoutInterval):</div><div class="line">			err = fmt.Errorf(<span class="string">"Timeout trying to get proxy connection"</span>)</div><div class="line">			<span class="keyword">return</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>getproxy函数会首先在Control的proxies中找有没有已存在的链接，如果有的话直接拿出来用，如果没有的话请求客户端创建proxy链接，并阻塞在select。客户端会连接服务端，并发送注册proxy的消息msg.RegProxy。这个消息中会带有客户端的id。<br>服务端通过这个id把这条链接存放在c.proxies中，这样的话GetProxy继续运行，并返回可用的proxy链接。<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//接收新的proxy链接消息</span></div><div class="line">	<span class="keyword">switch</span> m := rawMsg.(<span class="keyword">type</span>) &#123;</div><div class="line">			<span class="keyword">case</span> *msg.Auth:</div><div class="line">				NewControl(tunnelConn, m)</div><div class="line"></div><div class="line">			<span class="keyword">case</span> *msg.RegProxy:</div><div class="line">				NewProxy(tunnelConn, m)</div><div class="line"></div><div class="line">			<span class="keyword">default</span>:</div><div class="line">				tunnelConn.Close()</div><div class="line">			&#125;</div><div class="line">			</div><div class="line"><span class="comment">//根据id找到control，把链接放入proxies</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewProxy</span><span class="params">(pxyConn conn.Conn, regPxy *msg.RegProxy)</span></span> &#123;</div><div class="line">	ctl := controlRegistry.Get(regPxy.ClientId)</div><div class="line"></div><div class="line">	<span class="keyword">if</span> ctl == <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(<span class="string">"No client found for identifier: "</span> + regPxy.ClientId)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	ctl.RegisterProxy(pxyConn)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>获取proxy链接之后只要把tunnel和proxy链接相连就可以实现数据传输了<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// join the public and proxy connections</span></div><div class="line">bytesIn, bytesOut := conn.Join(publicConn, proxyConn)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">Join</span><span class="params">(c Conn, c2 Conn)</span> <span class="params">(<span class="keyword">int64</span>, <span class="keyword">int64</span>)</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> wait sync.WaitGroup</div><div class="line"></div><div class="line">	pipe := <span class="function"><span class="keyword">func</span><span class="params">(to Conn, from Conn, bytesCopied *<span class="keyword">int64</span>)</span></span> &#123;</div><div class="line">		<span class="keyword">defer</span> to.Close()</div><div class="line">		<span class="keyword">defer</span> from.Close()</div><div class="line">		<span class="keyword">defer</span> wait.Done()</div><div class="line"></div><div class="line">		<span class="keyword">var</span> err error</div><div class="line">		*bytesCopied, err = io.Copy(to, from)</div><div class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">			from.Warn(<span class="string">"Copied %d bytes to %s before failing with error %v"</span>, *bytesCopied, to.Id(), err)</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			from.Debug(<span class="string">"Copied %d bytes to %s"</span>, *bytesCopied, to.Id())</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	wait.Add(<span class="number">2</span>)</div><div class="line">	<span class="keyword">var</span> fromBytes, toBytes <span class="keyword">int64</span></div><div class="line">	<span class="keyword">go</span> pipe(c, c2, &amp;fromBytes)</div><div class="line">	<span class="keyword">go</span> pipe(c2, c, &amp;toBytes)</div><div class="line">	c.Info(<span class="string">"Joined with connection %s"</span>, c2.Id())</div><div class="line">	wait.Wait()</div><div class="line">	<span class="keyword">return</span> fromBytes, toBytes</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>客户端的部分行为在上文中已经提及了，这里简单讲一下。</p>
+<p>读取配置文件之后，客户端会创建一个Controller运行。<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NewController().Run(config)</div></pre></td></tr></table></figure></p>
+<p>Controller有一个web端，主要显示一些连接的信息（只有http和https会显示，tcp协议不会），这个部分不说了，主要说一下和服务端通信的部分。<br>Controller中会执行model.run运行clientmodel。<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ctl.Go(ctl.model.Run)</div></pre></td></tr></table></figure></p>
+<p>clientmodel会执行control函数<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *ClientModel)</span> <span class="title">Run</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// how long we should wait before we reconnect</span></div><div class="line">	maxWait := <span class="number">30</span> * time.Second</div><div class="line">	wait := <span class="number">1</span> * time.Second</div><div class="line"></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="comment">// run the control channel</span></div><div class="line">		c.control()</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在control函数中，client会根据配置文件连接到相应的服务端进行认证，成功之后发送要进行映射的tunnel信息。发送成功之后就等着听取服务端的命令就好了。（同时要自己维护心跳）<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Establishes and manages a tunnel control connection with the server</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *ClientModel)</span> <span class="title">control</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">	<span class="comment">// establish control channel</span></div><div class="line">	<span class="keyword">var</span> (</div><div class="line">		ctlConn conn.Conn</div><div class="line">		err     error</div><div class="line">	)</div><div class="line">	<span class="keyword">if</span> c.proxyUrl == <span class="string">""</span> &#123;</div><div class="line">		<span class="comment">// simple non-proxied case, just connect to the server</span></div><div class="line">		ctlConn, err = conn.Dial(c.serverAddr, <span class="string">"ctl"</span>, c.tlsConfig)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		ctlConn, err = conn.DialHttpProxy(c.proxyUrl, c.serverAddr, <span class="string">"ctl"</span>, c.tlsConfig)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// authenticate with the server</span></div><div class="line">	auth := &amp;msg.Auth&#123;</div><div class="line">		ClientId:  c.id,</div><div class="line">		OS:        runtime.GOOS,</div><div class="line">		Arch:      runtime.GOARCH,</div><div class="line">		Version:   version.Proto,</div><div class="line">		MmVersion: version.MajorMinor(),</div><div class="line">		User:      c.authToken,</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> err = msg.WriteMsg(ctlConn, auth); err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// wait for the server to authenticate us</span></div><div class="line">	<span class="keyword">var</span> authResp msg.AuthResp</div><div class="line">	<span class="keyword">if</span> err = msg.ReadMsgInto(ctlConn, &amp;authResp); err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">	c.id = authResp.ClientId</div><div class="line">	c.serverVersion = authResp.MmVersion</div><div class="line">	c.Info(<span class="string">"Authenticated with server, client id: %v"</span>, c.id)</div><div class="line">	c.update()</div><div class="line">	<span class="keyword">if</span> err = SaveAuthToken(c.configPath, c.authToken); err != <span class="literal">nil</span> &#123;</div><div class="line">		c.Error(<span class="string">"Failed to save auth token: %v"</span>, err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// request tunnels</span></div><div class="line">	reqIdToTunnelConfig := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*TunnelConfiguration)</div><div class="line">	<span class="keyword">for</span> _, config := <span class="keyword">range</span> c.tunnelConfig &#123;</div><div class="line">		<span class="comment">// create the protocol list to ask for</span></div><div class="line">		<span class="keyword">var</span> protocols []<span class="keyword">string</span></div><div class="line">		<span class="keyword">for</span> proto, _ := <span class="keyword">range</span> config.Protocols &#123;</div><div class="line">			protocols = <span class="built_in">append</span>(protocols, proto)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		reqTunnel := &amp;msg.ReqTunnel&#123;</div><div class="line">			ReqId:      util.RandId(<span class="number">8</span>),</div><div class="line">			Protocol:   strings.Join(protocols, <span class="string">"+"</span>),</div><div class="line">			Hostname:   config.Hostname,</div><div class="line">			Subdomain:  config.Subdomain,</div><div class="line">			HttpAuth:   config.HttpAuth,</div><div class="line">			RemotePort: config.RemotePort,</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// send the tunnel request</span></div><div class="line">		<span class="keyword">if</span> err = msg.WriteMsg(ctlConn, reqTunnel); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(err)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// save request id association so we know which local address</span></div><div class="line">		<span class="comment">// to proxy to later</span></div><div class="line">		reqIdToTunnelConfig[reqTunnel.ReqId] = config</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// start the heartbeat</span></div><div class="line">	lastPong := time.Now().UnixNano()</div><div class="line">	c.ctl.Go(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.heartbeat(&amp;lastPong, ctlConn) &#125;)</div><div class="line"></div><div class="line">	<span class="comment">// main control loop</span></div><div class="line">	<span class="keyword">for</span> &#123;</div><div class="line">		<span class="keyword">var</span> rawMsg msg.Message</div><div class="line">		<span class="keyword">if</span> rawMsg, err = msg.ReadMsg(ctlConn); err != <span class="literal">nil</span> &#123;</div><div class="line">			<span class="built_in">panic</span>(err)</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">switch</span> m := rawMsg.(<span class="keyword">type</span>) &#123;</div><div class="line">		<span class="keyword">case</span> *msg.ReqProxy:</div><div class="line">			c.ctl.Go(c.proxy)</div><div class="line"></div><div class="line">		<span class="keyword">case</span> *msg.Pong:</div><div class="line">			atomic.StoreInt64(&amp;lastPong, time.Now().UnixNano())</div><div class="line"></div><div class="line">		<span class="keyword">case</span> *msg.NewTunnel:</div><div class="line">			<span class="keyword">if</span> m.Error != <span class="string">""</span> &#123;</div><div class="line">				emsg := fmt.Sprintf(<span class="string">"Server failed to allocate tunnel: %s"</span>, m.Error)</div><div class="line">				c.Error(emsg)</div><div class="line">				c.ctl.Shutdown(emsg)</div><div class="line">				<span class="keyword">continue</span></div><div class="line">			&#125;</div><div class="line"></div><div class="line">			tunnel := mvc.Tunnel&#123;</div><div class="line">				PublicUrl: m.Url,</div><div class="line">				LocalAddr: reqIdToTunnelConfig[m.ReqId].Protocols[m.Protocol],</div><div class="line">				Protocol:  c.protoMap[m.Protocol],</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			c.tunnels[tunnel.PublicUrl] = tunnel</div><div class="line">			c.connStatus = mvc.ConnOnline</div><div class="line">			c.Info(<span class="string">"Tunnel established at %v"</span>, tunnel.PublicUrl)</div><div class="line">			c.update()</div><div class="line"></div><div class="line">		<span class="keyword">default</span>:</div><div class="line">			ctlConn.Warn(<span class="string">"Ignoring unknown control message %v "</span>, m)</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里最重要的信息是msg.ReqProxy，接受到这个信息之后服务端会主动创建客户端到服务端的proxy链接<br><figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Establishes and manages a tunnel proxy connection with the server</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *ClientModel)</span> <span class="title">proxy</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="keyword">var</span> (</div><div class="line">		remoteConn conn.Conn</div><div class="line">		err        error</div><div class="line">	)</div><div class="line"></div><div class="line">	<span class="keyword">if</span> c.proxyUrl == <span class="string">""</span> &#123;</div><div class="line">		remoteConn, err = conn.Dial(c.serverAddr, <span class="string">"pxy"</span>, c.tlsConfig)</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		remoteConn, err = conn.DialHttpProxy(c.proxyUrl, c.serverAddr, <span class="string">"pxy"</span>, c.tlsConfig)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	err = msg.WriteMsg(remoteConn, &amp;msg.RegProxy&#123;ClientId: c.id&#125;)</div><div class="line"></div><div class="line">	<span class="comment">// wait for the server to ack our register</span></div><div class="line">	<span class="keyword">var</span> startPxy msg.StartProxy</div><div class="line">	<span class="keyword">if</span> err = msg.ReadMsgInto(remoteConn, &amp;startPxy); err != <span class="literal">nil</span> &#123;</div><div class="line">		remoteConn.Error(<span class="string">"Server failed to write StartProxy: %v"</span>, err)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	tunnel, ok := c.tunnels[startPxy.Url]</div><div class="line">	<span class="keyword">if</span> !ok &#123;</div><div class="line">		remoteConn.Error(<span class="string">"Couldn't find tunnel for proxy: %s"</span>, startPxy.Url)</div><div class="line">		<span class="keyword">return</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// start up the private connection</span></div><div class="line">	start := time.Now()</div><div class="line">	localConn, err := conn.Dial(tunnel.LocalAddr, <span class="string">"prv"</span>, <span class="literal">nil</span>)</div><div class="line"></div><div class="line">	m := c.metrics</div><div class="line">	m.proxySetupTimer.Update(time.Since(start))</div><div class="line">	m.connMeter.Mark(<span class="number">1</span>)</div><div class="line">	c.update()</div><div class="line">	m.connTimer.Time(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">		localConn := tunnel.Protocol.WrapConn(localConn, mvc.ConnectionContext&#123;Tunnel: tunnel, ClientAddr: startPxy.ClientAddr&#125;)</div><div class="line">		bytesIn, bytesOut := conn.Join(localConn, remoteConn)</div><div class="line">		m.bytesIn.Update(bytesIn)</div><div class="line">		m.bytesOut.Update(bytesOut)</div><div class="line">		m.bytesInCount.Inc(bytesIn)</div><div class="line">		m.bytesOutCount.Inc(bytesOut)</div><div class="line">	&#125;)</div><div class="line">	c.update()</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>以上就是ngrok服务端和客户端的主要逻辑了。</p>
+<p>写的比较匆忙，如果看不明白可以找相关的文章对比着看看。比如这篇：<a href="http://tonybai.com/2015/05/14/ngrok-source-intro/" target="_blank" rel="external">ngrok原理浅析</a> </p>
+<p>如果想要搭建ngrok服务端，可以看这篇：<a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="external">搭建 ngrok 服务实现内网穿透</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2016/05/24/Notes/ngrok-notes/" data-id="cj4mgquah0033nw51v3zrhmi1" class="article-share-link" data-share="baidu" data-title="ngrok 源码解析">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2016/05/24/Notes/ngrok-notes/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/01/gogs配置/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          给 gogs 加上 let&#39;s entrypt 证书
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/10/09/Mess/rinetd-端口转发/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">rinetd端口转发</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux-C/">Linux C</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mess/">Mess</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a><span class="category-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Opengrok/">Opengrok</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/System/">System</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Warming/">Warming</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aria2c/">aria2c</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gogs/">gogs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-entrypt/">let's entrypt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life-now/">life now</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/交叉编译/">交叉编译</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树/">树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树莓派/">树莓派</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线段树/">线段树</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Opengrok/" style="font-size: 10px;">Opengrok</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/Warming/" style="font-size: 20px;">Warming</a> <a href="/tags/aria2c/" style="font-size: 10px;">aria2c</a> <a href="/tags/gdb/" style="font-size: 10px;">gdb</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/gogs/" style="font-size: 10px;">gogs</a> <a href="/tags/let-s-entrypt/" style="font-size: 10px;">let's entrypt</a> <a href="/tags/life-now/" style="font-size: 10px;">life now</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a> <a href="/tags/tools/" style="font-size: 10px;">tools</a> <a href="/tags/交叉编译/" style="font-size: 10px;">交叉编译</a> <a href="/tags/树/" style="font-size: 10px;">树</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/线段树/" style="font-size: 10px;">线段树</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/">Hasee Z7 sl7d3 archlinux 安装笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/17/git-repo-永久删除大文件/">git repo 永久删除大文件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/29/Linux-的-ACL/">Linux 的 ACL</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/20/Opengrok-优秀的代码阅读工具/">Opengrok 优秀的代码阅读工具</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/01/交叉编译树莓派的-aria2c/">交叉编译树莓派的 aria2c</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 messyidea<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/Projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'messyidea';
+  
+  var disqus_url = 'http://messyidea.com/2016/05/24/Notes/ngrok-notes/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hasee Z7 sl7d3 archlinux 安装笔记 | Messyidea&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本来以为很简单的，没想到踩了这么多坑。花了好几天时间才装好。如果有外置显示器的需求的话，建议不要碰 gnome3 和 wayland因为这台笔记本的 hdmi 口和 mini dp 口直连独显，如果需要双显卡工作的话必须使用 intel-virtual-output ， intel-virtual-output 这个东西貌似不支持 wayland， 总是检测不到 virtual display （">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hasee Z7 sl7d3 archlinux 安装笔记">
+<meta property="og:url" content="http://messyidea.com/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/index.html">
+<meta property="og:site_name" content="Messyidea&#39;s blog">
+<meta property="og:description" content="本来以为很简单的，没想到踩了这么多坑。花了好几天时间才装好。如果有外置显示器的需求的话，建议不要碰 gnome3 和 wayland因为这台笔记本的 hdmi 口和 mini dp 口直连独显，如果需要双显卡工作的话必须使用 intel-virtual-output ， intel-virtual-output 这个东西貌似不支持 wayland， 总是检测不到 virtual display （">
+<meta property="og:updated_time" content="2017-07-02T08:31:59.134Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hasee Z7 sl7d3 archlinux 安装笔记">
+<meta name="twitter:description" content="本来以为很简单的，没想到踩了这么多坑。花了好几天时间才装好。如果有外置显示器的需求的话，建议不要碰 gnome3 和 wayland因为这台笔记本的 hdmi 口和 mini dp 口直连独显，如果需要双显卡工作的话必须使用 intel-virtual-output ， intel-virtual-output 这个东西貌似不支持 wayland， 总是检测不到 virtual display （">
+  
+    <link rel="alternative" href="/atom.xml" title="Messyidea&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Messyidea&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/Projects">Projects</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="messyidea.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Hasee-Z7-sl7d3-archlinux-安装教程" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/" class="article-date">
+  <time datetime="2017-03-04T00:11:00.000Z" itemprop="datePublished">3月 3 2017</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Hasee Z7 sl7d3 archlinux 安装笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本来以为很简单的，没想到踩了这么多坑。花了好几天时间才装好。<br>如果有外置显示器的需求的话，建议不要碰 gnome3 和 wayland<br>因为这台笔记本的 hdmi 口和 mini dp 口直连独显，如果需要双显卡工作的话必须使用 intel-virtual-output ， intel-virtual-output 这个东西貌似不支持 wayland， 总是检测不到 virtual display （wayland 从只差一步到放弃 = =）。<br>基于 Xorg 的 gnome3 对 intel-virtual-output 支持完好， 不过不知道什么原因， 在连接外置显示器的情况下， 合上盖子或者是只用外置显示器会导致蜜汁卡吨，花大量时间搜寻后无解（起初以为是acpi的问题，不过内核加参数 acpi=off 会导致笔记本开不了机）。经测试，Xfce4 正常， 所以之后选择了 Xfce4。</p>
+<h2 id="为了避免以后踩坑，下面记录下步骤。"><a href="#为了避免以后踩坑，下面记录下步骤。" class="headerlink" title="为了避免以后踩坑，下面记录下步骤。"></a>为了避免以后踩坑，下面记录下步骤。</h2><p>1 制作 Arch 启动u盘<br>2 在BIOS下把显卡模式切换为 <code>DISCRETE</code> （BIOS 对于显卡有两个模式，分别是MSHYBRID 和 DISCRETE, MSHYBRID是双显卡切换， DISCRETE是只用独显，MSHYBRID模式不能够启动 Arch U盘 ）<br>3 启动 Arch 安装盘<br>4 fdisk 分区<br>5  挂载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"># /dev/sdb2 是 / ， /dev/sdb1 是boot, /dev/sdb3 是 /home</div><div class="line"># 具体按照自己的分区来</div><div class="line">mount /dev/sdb2 /mnt</div><div class="line">mkdir /mnt/boot</div><div class="line">mkdir /mnt/home</div><div class="line">mount /dev/sdb1 /mnt/boot</div><div class="line">mount /dev/sdb3 /mnt/home</div></pre></td></tr></table></figure></p>
+<p>6  更新mirrors<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /etc/pacman.d </div><div class="line">sed -i &quot;s/^\b/#/g&quot; mirrorlist </div><div class="line">nano mirrorlist </div><div class="line">#将mirrors.ustc.edu.cn和mirrors6.ustc.edu.cn前面的#去掉 </div><div class="line">pacman -Syy</div></pre></td></tr></table></figure></p>
+<p>7 安装base系统<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">pacstrap /mnt base base-devel </div><div class="line">#如果你想使用ifconfig之类的工具，请在上面加上net-tools</div></pre></td></tr></table></figure></p>
+<p>8 生成fstab<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">genfstab -U -p /mnt &gt;&gt;/mnt/etc/fstab</div></pre></td></tr></table></figure></p>
+<p>9 chroot<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">arch-chroot /mnt /bin/bash</div></pre></td></tr></table></figure></p>
+<p>10 配置locale<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /etc</div><div class="line">nano locale.gen</div><div class="line">#将en_US.UTF-8,zh_CN.GBK,zh_CN.GB2312,zh_CN.GB18030,zh_CN.UTF-8前的#去掉 </div><div class="line">locale-gen </div><div class="line">echo LANG=zh_CN.UTF-8 &gt;&gt; locale.conf</div></pre></td></tr></table></figure></p>
+<p>11 设置时区<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</div></pre></td></tr></table></figure></p>
+<p>12 设置主机名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 主机名 &gt;&gt; /etc/hostname</div></pre></td></tr></table></figure></p>
+<p>13 用户配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">passwd </div><div class="line">#修改root密码 </div><div class="line">useradd -m -g users -G wheel -s /bin/bash 用户名 </div><div class="line">passwd 用户名</div></pre></td></tr></table></figure></p>
+<p>14 安装GRUB<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># 具体硬盘要根据自己的来</div><div class="line">pacman -S grub-bios </div><div class="line">grub-install /dev/sdb</div></pre></td></tr></table></figure></p>
+<p>开机需要内核开启一些参数（如果不加这些参数之后的bbswitch工作会不正常， 见<a href="https://github.com/Bumblebee-Project/Bumblebee/issues/764#issuecomment-234494238" target="_blank" rel="external">这里</a>）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">vim /etc/default/grub</div><div class="line"># 配置 GRUB_CMDLINE_LINUX_DEFAULT</div><div class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet acpi_osi=! acpi_osi=\&quot;Windows 2009\&quot;&quot;</div><div class="line"></div><div class="line"># 之后生成grub.cfg</div><div class="line">grub-mkconfig -o /boot/grub/grub.cfg</div><div class="line"></div><div class="line"># 开启dhcpcd</div><div class="line">systemctl enable dhcpcd.service</div></pre></td></tr></table></figure></p>
+<p>15 退出chroot， 重启<br>16 安装synaptics驱动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pacman -S xf86-input-synaptics</div></pre></td></tr></table></figure></p>
+<p>17 安装 xorg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pacman -S xorg-server xorg-xinit xorg-utils xorg-server-utils</div></pre></td></tr></table></figure></p>
+<p>18 安装xfce4<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">pacman -S xfce4 xfce4-goodies</div><div class="line"># 如果需要从命令行启动xfce的话只需要进行如下步骤</div><div class="line">cp /etc/X11/xinit/xinitrc ~/.xinitrc</div><div class="line"># 在.xinitrc后加上 exec startxfce4 即可</div></pre></td></tr></table></figure></p>
+<p>19 配置双显卡<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">pacman -S bumblebee</div><div class="line">pacman -S mesa</div><div class="line">pacman -S xf86-video-intel</div><div class="line">pacman -S nvidia</div><div class="line">gpasswd -a 用户名 bumblebee</div><div class="line">systemctl enable bumblebeed.service</div></pre></td></tr></table></figure></p>
+<p>在 /etc/X11/xorg.conf.d下创建一个文件 <code>20-intel.conf</code>， 内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Section &quot;Device&quot;</div><div class="line">        Identifier &quot;Intel Graphics&quot;</div><div class="line">        Driver     &quot;intel&quot;</div><div class="line">        BusID      &quot;PCI:00:02:0&quot;    # &lt;&lt;&lt;&lt; replace with correct address</div><div class="line">EndSection</div></pre></td></tr></table></figure></p>
+<p>配置 /etc/bumblebee/xorg.conf.nvidia<br>内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">Section &quot;ServerLayout&quot;</div><div class="line">    Identifier  &quot;Layout0&quot;</div><div class="line">    Option      &quot;AutoAddDevices&quot; &quot;true&quot;</div><div class="line">    Option      &quot;AutoAddGPU&quot; &quot;false&quot;</div><div class="line">EndSection</div><div class="line"></div><div class="line">Section &quot;Device&quot;</div><div class="line">    Identifier  &quot;DiscreteNvidia&quot;</div><div class="line">    Driver      &quot;nvidia&quot;</div><div class="line">    VendorName  &quot;NVIDIA Corporation&quot;</div><div class="line"></div><div class="line">#   If the X server does not automatically detect your VGA device,</div><div class="line">#   you can manually set it here.</div><div class="line">#   To get the BusID prop, run `lspci | egrep &apos;VGA|3D&apos;` and input the data</div><div class="line">#   as you see in the commented example.</div><div class="line">#   This Setting may be needed in some platforms with more than one</div><div class="line">#   nvidia card, which may confuse the proprietary driver (e.g.,</div><div class="line">#   trying to take ownership of the wrong device). Also needed on Ubuntu 13.04.</div><div class="line">    BusID &quot;PCI:01:00:0&quot;</div><div class="line"></div><div class="line">#   Setting ProbeAllGpus to false prevents the new proprietary driver</div><div class="line">#   instance spawned to try to control the integrated graphics card,</div><div class="line">#   which is already being managed outside bumblebee.</div><div class="line">#   This option doesn&apos;t hurt and it is required on platforms running</div><div class="line">#   more than one nvidia graphics card with the proprietary driver.</div><div class="line">#   (E.g. Macbook Pro pre-2010 with nVidia 9400M + 9600M GT).</div><div class="line">#   If this option is not set, the new Xorg may blacken the screen and</div><div class="line">#   render it unusable (unless you have some way to run killall Xorg).</div><div class="line">    Option &quot;ProbeAllGpus&quot; &quot;false&quot;</div><div class="line"></div><div class="line">    Option &quot;AllowEmptyInitialConfiguration&quot;</div><div class="line">    Option &quot;NoLogo&quot; &quot;true&quot;</div><div class="line">    Option &quot;UseEDID&quot; &quot;true&quot;</div><div class="line">    # Option &quot;UseDisplayDevice&quot; &quot;none&quot;</div><div class="line">EndSection</div></pre></td></tr></table></figure></p>
+<p>具体有哪些地方要改呢？<br>对于一般用户，去掉BusID的注释即可。<br>如果有外界屏幕需求的话， 需要把 <code>UseEDID</code> 和 <code>AutoAddDevices</code> 设置为 <code>true</code>, 然后加上 <code>Option &quot;AllowEmptyInitialConfiguration&quot;</code><br>（这三个操作必不可少，缺了AllowEmptyInitialConfiguration会导致 独显初始化失败）<br>更改之后不能进入X环境（因为系统会使用I卡，但是目前只用独显状态I卡识别不了，导致no screen found）<br>20 安装 lightdm（如果命令行启动可以不做）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pacman -S lightdm</div><div class="line">pacman -S  lightdm-gtk-greeter</div><div class="line">systemctl enable lightdm.service</div></pre></td></tr></table></figure></p>
+<p>21 重启，在BIOS中把显卡选项切换为 <code>MSHYBRID</code>（不切换进不了系统）<br>22 输入帐号密码之后可以登录<br>23 安装 libxss（intel-virtual-output 依赖这个）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pacman -S libxss</div></pre></td></tr></table></figure></p>
+<p>24 激活外接屏幕<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># 先激活下 独显， 如果没有此操作，外屏不能被激活 = = ，如果失败的话可能因为显卡未初始化完全，等几秒再尝试下</div><div class="line">optirun glxspheres64</div><div class="line"># 显示成功之后执行下面的命令，外接屏被正确识别</div><div class="line">intel-virtual-output</div></pre></td></tr></table></figure></p>
+<p>25 安装常用软件（从<a href="https://github.com/helmuthdu/aui" target="_blank" rel="external">AUI</a>里面拷贝出来了一些常用的软件，具体根据自己需要装）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">pacman -S bc rsync mlocate bash-completion pkgstats arch-wiki-lite</div><div class="line">pacman -S zip unzip unrar p7zip lzop cpio</div><div class="line">pacman -S avahi nss-mdns</div><div class="line">pacman -S alsa-utils alsa-plugins</div><div class="line">pacman -S pulseaudio pulseaudio-alsa</div><div class="line">pacman -S ntfs-3g dosfstools exfat-utils f2fs-tools fuse fuse-exfat autofs mtpfs</div><div class="line">pacman -S --asdeps --needed cairo fontconfig freetype2</div><div class="line">pacman -S networkmanager dnsmasq network-manager-applet nm-connection-editor</div><div class="line">pacman -S networkmanager-openconnect networkmanager-openvpn networkmanager-pptp networkmanager-vpnc</div><div class="line">system_ctl enable NetworkManager.service</div><div class="line"></div><div class="line"># 时间校准</div><div class="line">pacman -S ntpd</div><div class="line">systemctl enable ntpd</div></pre></td></tr></table></figure></p>
+<p>其它输入法之类的就不说了。<br>最好加一下archlinuxcn的源，里面可以直接安装sublime， vscode， wps之类的软件，非常方便。</p>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://my.oschina.net/codeaxe/blog/127533" target="_blank" rel="external">https://my.oschina.net/codeaxe/blog/127533</a><br><a href="https://bbs.archlinux.org/viewtopic.php?id=169742" target="_blank" rel="external">https://bbs.archlinux.org/viewtopic.php?id=169742</a><br><a href="https://github.com/Bumblebee-Project/Bumblebee/issues/764#issuecomment-234494238" target="_blank" rel="external">https://github.com/Bumblebee-Project/Bumblebee/issues/764#issuecomment-234494238</a><br><a href="https://wiki.archlinux.org/index.php/Clevo_P650RS" target="_blank" rel="external">https://wiki.archlinux.org/index.php/Clevo_P650RS</a><br><a href="https://wiki.archlinux.org/index.php/Kernel_parameters" target="_blank" rel="external">https://wiki.archlinux.org/index.php/Kernel_parameters</a><br><a href="https://wiki.archlinux.org/index.php/Bumblebee" target="_blank" rel="external">https://wiki.archlinux.org/index.php/Bumblebee</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/" data-id="cj4mgqu4u0001nw51vs5f9i85" class="article-share-link" data-share="baidu" data-title="Hasee Z7 sl7d3 archlinux 安装笔记">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/02/17/git-repo-永久删除大文件/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">git repo 永久删除大文件</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+  <section id="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux-C/">Linux C</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mess/">Mess</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a><span class="category-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Opengrok/">Opengrok</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/System/">System</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Warming/">Warming</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aria2c/">aria2c</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gogs/">gogs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-entrypt/">let's entrypt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life-now/">life now</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/交叉编译/">交叉编译</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树/">树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树莓派/">树莓派</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线段树/">线段树</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Opengrok/" style="font-size: 10px;">Opengrok</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/Warming/" style="font-size: 20px;">Warming</a> <a href="/tags/aria2c/" style="font-size: 10px;">aria2c</a> <a href="/tags/gdb/" style="font-size: 10px;">gdb</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/gogs/" style="font-size: 10px;">gogs</a> <a href="/tags/let-s-entrypt/" style="font-size: 10px;">let's entrypt</a> <a href="/tags/life-now/" style="font-size: 10px;">life now</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a> <a href="/tags/tools/" style="font-size: 10px;">tools</a> <a href="/tags/交叉编译/" style="font-size: 10px;">交叉编译</a> <a href="/tags/树/" style="font-size: 10px;">树</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/线段树/" style="font-size: 10px;">线段树</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/">Hasee Z7 sl7d3 archlinux 安装笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/17/git-repo-永久删除大文件/">git repo 永久删除大文件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/29/Linux-的-ACL/">Linux 的 ACL</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/20/Opengrok-优秀的代码阅读工具/">Opengrok 优秀的代码阅读工具</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/01/交叉编译树莓派的-aria2c/">交叉编译树莓派的 aria2c</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 messyidea<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/Projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'messyidea';
+  
+  var disqus_url = 'http://messyidea.com/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

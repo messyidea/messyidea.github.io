@@ -1,0 +1,842 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Messyidea&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="messy ideas">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Messyidea&#39;s blog">
+<meta property="og:url" content="http://messyidea.com/page/2/index.html">
+<meta property="og:site_name" content="Messyidea&#39;s blog">
+<meta property="og:description" content="messy ideas">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Messyidea&#39;s blog">
+<meta name="twitter:description" content="messy ideas">
+  
+    <link rel="alternative" href="/atom.xml" title="Messyidea&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Messyidea&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/Projects">Projects</a>
+        
+          <a class="main-nav-link" href="/about">About</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="messyidea.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main">
+  
+    <article id="post-Linux C/getopt" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/31/Linux C/getopt/" class="article-date">
+  <time datetime="2015-09-01T02:41:11.000Z" itemprop="datePublished">8月 31 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux-C/">Linux C</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/31/Linux C/getopt/">getopt</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#include&lt;unistd.h&gt;</div><div class="line">int getopt(int argc,char * const argv[ ],const char * optstring);</div></pre></td></tr></table></figure>
+<p>它是用来分析命令行参数的函数。参数optstring 则代表欲处理的选项字符串。</p>
+<ul>
+<li>字母后没有符号： 不带值的参数，定义即参数本身</li>
+<li>字母后带一个冒号： 必须带值，值被全域变量optarg指向。</li>
+<li>字母后带两个冒号： 可选值的参数，参数可加可不加。</li>
+</ul>
+<p>getopt()每次调用会逐次返回命令行传入的参数，当没有参数的最后一次调用会返回-1。</p>
+<p>参数返回的是字符串的，有些需要转化为整形，可以用下面函数.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">定义函数</div><div class="line">unsigned long strtoul(const char *nptr,char **endptr,int base);</div><div class="line">将字符串转化为长整形。</div><div class="line">base 代表进制。base是0的话会根据字符串自动选择类型。若参数endptr不为NULL，则会将遇到不合条件而终止的nptr中的字符指针由endptr返回</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/08/31/Linux C/getopt/" data-id="cj4mgqu97001knw51lj7weda6" class="article-share-link" data-share="baidu" data-title="getopt">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/08/31/Linux C/getopt/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Linux/交换处理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/31/Linux/交换处理/" class="article-date">
+  <time datetime="2015-08-31T04:33:03.000Z" itemprop="datePublished">8月 31 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/31/Linux/交换处理/">交换处理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>交换处理： 内存容量不足以容纳整个程序的代码和数据。所以需要定期进行交换处理。<br>sched();    //用来定期寻找交换处理对象的进程，也被称为swapper<br>sched() 从proc[]中寻找满足以下条件的进程作为交换处理的对象。</p>
+<ul>
+<li>位于交换空间最长 </li>
+<li>位于可执行状态</li>
+</ul>
+<p>如果换入时内存不足，需要找满足一下条件的进程换出</p>
+<ul>
+<li>位于内存中</li>
+<li>处于SWAIT or SSTOP状态<br>如果没有满足，则放宽条件</li>
+<li>滞留内存时间最长</li>
+<li>处于SRUN 或 SSLEEP状态<br>（但是要满足以下条件。）</li>
+<li>换入对象位于交换空间的时间大于或等于3秒</li>
+<li>换入对象位于内存的时间大于或等于2秒</li>
+</ul>
+<p>mess:<br>spl6() //将处理器优先级设置为6，防止发生中断。</p>
+<p>代码段，用text结构体表示<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">struct text &#123;</div><div class="line">	int x_daddr;	//交换磁盘的地址</div><div class="line">	int x_caddr;	//读入内存时物理内存地址</div><div class="line">	int x_size;		//代码段的长度</div><div class="line">	int *x_iptr;	//指向inode[]中对应程序执行文件的元素</div><div class="line">	char x_count;	//所有进程为对象的参照计数器</div><div class="line">	char x_ccount;	//以内存中的进程为对象的参照计数器</div><div class="line">&#125; text[NTEXT];</div></pre></td></tr></table></figure></p>
+<p>代码段在内存中只读，如果某个程序有多个进程，共享代码段。当内存中没有进程用代码段了，内存自动释放， 交换空间和内存没有进程使用代码段，代码段在交换空间中释放。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/08/31/Linux/交换处理/" data-id="cj4mgqu8z001anw51xfyz8cyp" class="article-share-link" data-share="baidu" data-title="交换处理">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/08/31/Linux/交换处理/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Linux/内存与交换空间" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/31/Linux/内存与交换空间/" class="article-date">
+  <time datetime="2015-08-31T04:32:54.000Z" itemprop="datePublished">8月 31 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/31/Linux/内存与交换空间/">内存和交换空间</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>内核用map管理内存和交换空间<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">struct map &#123;</div><div class="line">	char *m_size;</div><div class="line">	char *m_addr;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>int coremap[CMAPSIZ];    //以64字节为单位管理<br>int swapmap[SWAPSIZ];    //以512字节为单位管理</p>
+<p>获取未使用的区域采用了First Fit<br>数组尾部，有一个长度为0的元素，充当哨兵</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//分配地址</div><div class="line">malloc(mp, size);</div><div class="line">mp:  coremap[] or swapmap[]</div><div class="line">size: 大小</div><div class="line"></div><div class="line">//释放地址</div><div class="line">mfree(mp, size, aa);</div><div class="line">aa: addr, 释放的起始地址。</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/08/31/Linux/内存与交换空间/" data-id="cj4mgqu92001fnw51u8kehcqf" class="article-share-link" data-share="baidu" data-title="内存和交换空间">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/08/31/Linux/内存与交换空间/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Mess/var-list" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/18/Mess/var-list/" class="article-date">
+  <time datetime="2015-08-19T02:55:38.000Z" itemprop="datePublished">8月 18 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mess/">Mess</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/18/Mess/var-list/">var_list</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>C语言中如果参数个数不定，可以用省略号传参<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var func(parm_list, ...)</div></pre></td></tr></table></figure></p>
+<p>printf 也是用了这种传参方式。<br>函数传参的时候用到了栈的数据结构，参数从右往左一个一个入栈。所以理论上，知道一个参数的类型和其中一个的地址，就可以知道所有参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//var_list 是char*类型，定义一个var_list</div><div class="line">var_list args;</div><div class="line">//var_list 初始化</div><div class="line">var_start(args, parm_list);</div><div class="line">//调用var_arg ，返回type类型变量</div><div class="line">var_arg(args, type);</div><div class="line">//获取所有参数之后，以防发生危险，需要把args指针置为NULL</div><div class="line">var_end(args);</div></pre></td></tr></table></figure>
+<p>可以看一个简单printf的例子<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdarg.h&gt;</div><div class="line"></div><div class="line">void myprintf(const char *format, ...)</div><div class="line">&#123;</div><div class="line">     va_list ap;</div><div class="line">     char c;</div><div class="line"></div><div class="line">     va_start(ap, format);</div><div class="line">     while (c = *format++) &#123;</div><div class="line">	  switch(c) &#123;</div><div class="line">	  case &apos;c&apos;: &#123;</div><div class="line">	       /* char is promoted to int when passed through &apos;...&apos; */</div><div class="line">	       char ch = va_arg(ap, int);</div><div class="line">	       putchar(ch);</div><div class="line">	       break;</div><div class="line">	  &#125;</div><div class="line">	  case &apos;s&apos;: &#123;</div><div class="line">	       char *p = va_arg(ap, char *);</div><div class="line">	       fputs(p, stdout);</div><div class="line">	       break;</div><div class="line">	  &#125;</div><div class="line">	  default:</div><div class="line">	       putchar(c);</div><div class="line">	  &#125;</div><div class="line">     &#125;</div><div class="line">     va_end(ap);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(void)</div><div class="line">&#123;</div><div class="line">     myprintf(&quot;c\ts\n&quot;, &apos;1&apos;, &quot;hello&quot;);</div><div class="line">     return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/08/18/Mess/var-list/" data-id="cj4mgqu9z002inw51278i02em" class="article-share-link" data-share="baidu" data-title="var_list">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/08/18/Mess/var-list/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Mess/C++迭代器的一些记录" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/08/03/Mess/C++迭代器的一些记录/" class="article-date">
+  <time datetime="2015-08-03T23:49:45.000Z" itemprop="datePublished">8月 3 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mess/">Mess</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/08/03/Mess/C++迭代器的一些记录/">C++迭代器的一些记录</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>一段时间没写C++，把C++迭代器和java的引用搞混了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vector&lt;int&gt; vec;</div><div class="line">for(int i = 1; i &lt; 3; ++i) vec.push_back(i);</div><div class="line">vector&lt;int&gt;::iterator it1,it2;</div><div class="line">it1 = vec.begin();</div><div class="line">it2 = it1;</div><div class="line">it1 ++;</div></pre></td></tr></table></figure>
+<p>上述的代码最后it1 加之后it2还是vec.begin()<br>it2和it1是独立的，这里不和java的引用一样。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/08/03/Mess/C++迭代器的一些记录/" data-id="cj4mgqu9b001pnw51jmqgl7le" class="article-share-link" data-share="baidu" data-title="C++迭代器的一些记录">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/08/03/Mess/C++迭代器的一些记录/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Notes/git-usage" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/07/07/Notes/git-usage/" class="article-date">
+  <time datetime="2015-07-08T03:36:55.000Z" itemprop="datePublished">7月 7 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/07/07/Notes/git-usage/">git usage</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用的时候要把秘钥放到github网站上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C &quot;xxx@gmail.com&quot;</div></pre></td></tr></table></figure></p>
+<p>克隆一个仓库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone git://xxx</div></pre></td></tr></table></figure></p>
+<p>添加文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git add &lt;filename&gt;</div><div class="line">#把所有新文件添加进去</div><div class="line">git add .</div></pre></td></tr></table></figure></p>
+<p>本地提交改动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git commit -m &quot;some information about change and commit&quot;</div></pre></td></tr></table></figure></p>
+<p>推送到master<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push origin master</div></pre></td></tr></table></figure></p>
+<p>把仓库连接到远程服务器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git remote add origin &lt;server&gt;</div></pre></td></tr></table></figure></p>
+<p>查看git状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git status</div></pre></td></tr></table></figure></p>
+<p>版本回退<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#查看状态</div><div class="line">git log</div><div class="line">#回退</div><div class="line">git reset --hard 3628164</div></pre></td></tr></table></figure></p>
+<p>branch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">#创建一个分支&quot;feature&quot;并切换过去</div><div class="line">git checkout -b feature</div><div class="line">#切换到主分支</div><div class="line">git checkout master</div><div class="line">#查看分支</div><div class="line">git branch</div><div class="line">#删除新建分支</div><div class="line">git branch -d feature</div><div class="line">#强制删除分支[分支有改动]</div><div class="line">git branch -D feature</div><div class="line">#提交</div><div class="line">git push origin &lt;branch&gt;</div><div class="line">#丢弃文件修改</div><div class="line">git checkout -- &lt;filename&gt;</div></pre></td></tr></table></figure></p>
+<p>update and merge<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#更新仓库</div><div class="line">git pull</div><div class="line">#合并</div><div class="line">git merge &lt;branch&gt;</div><div class="line">#conflicts改掉之后合并成功，可以加入仓库</div><div class="line">git add &lt;filename&gt;</div><div class="line">#预览差异</div><div class="line">git diff &lt;source_branch&gt; &lt;target_branch&gt;</div></pre></td></tr></table></figure></p>
+<p>tag<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#[1b2e1d63ff]是提交的ID的前10位</div><div class="line">git tag 1.0.0 1b2e1d63ff</div><div class="line">#获取提交id</div><div class="line">git log</div><div class="line">#删除变迁</div><div class="line">git tag -d [name of tag]</div><div class="line">#提交标签</div><div class="line">git push origin --tags</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/07/07/Notes/git-usage/" data-id="cj4mgquaf0031nw51shewhn6g" class="article-share-link" data-share="baidu" data-title="git usage">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/07/07/Notes/git-usage/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Notes/autotools" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/27/Notes/autotools/" class="article-date">
+  <time datetime="2015-06-28T01:41:40.000Z" itemprop="datePublished">6月 27 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/27/Notes/autotools/">autotools</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>autotools是一系列工具，可以用来制作makefile</p>
+<p>其中包括了aclocal,autoscan,autoconf,autoheader,automake</p>
+<p>流程</p>
+<ul>
+<li><p>1.运行autoscan.<br>它会搜索源文件以寻找一般移植性的问题，并创建一个文件”configure.scan”<br>configure.scan为configure.in的原形文件。</p>
+</li>
+<li><p>2.修改configure.scan为configure.in,按照描述填上配置<br>下面是单hello文件的配置。与原始文件相比加上了AM_INIT_AUTOMAKE()和AC_CONFIG_FILES()</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">#                                               -*- Autoconf -*-</div><div class="line"># Process this file with autoconf to produce a configure script.</div><div class="line"></div><div class="line">AC_PREREQ([2.69])</div><div class="line">AC_INIT(hello, 1.0)</div><div class="line">AM_INIT_AUTOMAKE(hello,1.0)</div><div class="line">AC_CONFIG_SRCDIR([hello.c])</div><div class="line">AC_CONFIG_HEADERS([config.h])</div><div class="line"></div><div class="line"># Checks for programs.</div><div class="line">AC_PROG_CC</div><div class="line"></div><div class="line"># Checks for libraries.</div><div class="line"></div><div class="line"># Checks for header files.</div><div class="line"></div><div class="line"># Checks for typedefs, structures, and compiler characteristics.</div><div class="line"></div><div class="line"># Checks for library functions.</div><div class="line">AC_CONFIG_FILES([makefile])</div><div class="line">AC_OUTPUT</div></pre></td></tr></table></figure>
+<ul>
+<li><p>3.执行aclocal,生成”aclocal.m4”,主要功能是处理本地宏定义</p>
+</li>
+<li><p>4.执行autoconf，生成configure可执行文件</p>
+</li>
+<li><p>5.执行autoheader,负责生成config.h.in，复制用户附加的符号定义</p>
+</li>
+<li><p>6.编写makefile.am</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">AUTOMAKE_OPTIONS=foreign</div><div class="line">bin_PROGRAMS=hello</div><div class="line">hello_SOURCES=hello.c</div><div class="line">#如果有头文件，则hello_SOURCES=hello.c hello.h</div></pre></td></tr></table></figure>
+</li>
+<li><p>7.执行automake,把makefile.am转换成makefile.in.<br>automake -a(或automake –adding-missing)，可以让automake自动添加一些必须的脚本文件。</p>
+</li>
+<li><p>8.执行./configure,生成makefile</p>
+</li>
+<li><p>9.之后就直接可以make,make install,make clean之类的了。如果想要打包为压缩文档发布，直接运行make dist生成tar.gz压缩文件。</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/06/27/Notes/autotools/" data-id="cj4mgquaa002vnw510usfxfjh" class="article-share-link" data-share="baidu" data-title="autotools">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/06/27/Notes/autotools/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Notes/System-Protection" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/26/Notes/System-Protection/" class="article-date">
+  <time datetime="2015-06-27T03:00:00.000Z" itemprop="datePublished">6月 26 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/26/Notes/System-Protection/">System Protection</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>　　《30天自制操作系统》差不多都过了一遍。感觉操作系统和一般程序的最大的区别是可以随意操作和控制内存。而作为操作系统，最重要的是兼容性和稳定性。稳定的最基本的条件就是安全。所以操作系统作为最灵活的“程序”必须在安全方面做好工作。《30天自制操作系统》这本书上也讲了很多关于保护操作系统的知识，让我记忆深刻。下面就来总结一番。<br>　　保护操作系统是一项工程量十分巨大的活，有时候一个死角就能够然操作系统运行错误。所以要想保护操作系统，必须对操作系统的运行的每个流程都十分清楚，这样才能够找到操作系统的弱点，并做好防护措施。下面就来回顾一下操作系统的运行流程以及涉及的相关代码。</p>
+<ul>
+<li><p>1.BIOS找到启动区，执行启动区的代码。这段代码所在文件是ipl10.nas,是用汇编写的，引导区只有512字节，不足以存放操作系统，这段代码的主要作用就是设定分区格式，把操作系统读入内存，然后跳入到操作系统核心代码。说简单一点就是引导操作系统。</p>
+</li>
+<li><p>2.启动区之后直接跳入HariMari函数开始执行。相关代码在bootpack.c。这部分代码主要是初始化键盘、鼠标等硬件设备设备，初始化GDT、IDT、PIC,开放中断，初始化内存、初始化任务并运行，然后进入到了一个循环，在这个循环里面接收键盘和鼠标的数据，并控制数据的发送。</p>
+</li>
+<li><p>3.操作系统会启动一个终端。相关代码在console.c中。终端是当前的操作系统最重要的交互工具。主要功能是执行相关命令和外部程序。如果当前选中终端，输入字符在HariMari中被接收之后，会发送到终端做相关的显示，如果发送回车键之后，终端会判断是命令还是程序，并执行。</p>
+</li>
+<li><p>4.如果执行的是外部程序，则操作系统则会跳到程序的主函数执行其代码。为了程序的方便，程序可以调用操作系统所提供的公开API。</p>
+</li>
+</ul>
+<p>　　分析上面的内容。前三个部分是操作系统所提供的服务。这些部分是不能够被外部程序所更改的，只需要给操作系统关键部分文件加上一定的修改权限就可以了。比如在win7操作系统上，不能够删除系统关键文件，这应该是一个道理。这部分代码是设计和编写操作系统的人编写的，只要这部分代码稳定，能够保证运行正常功能不会出错就可以了。<br>　　第四个部分的代码是可以由其它程序员编写的，所以这部分代码可能会存在bug，或者是恶意代码，如果没有做好一定的防护，操作系统可能会崩溃。</p>
+<p>　　下面再来看一下外部文件被操作系统调用的流程。<br>　　用户通过键盘向电脑输入相关外部文件名字，然后回车。HariMari函数接收到键盘数据，发送给终端，终端判断输入是否是命令，如果不是命令，则查找是否存在该文件，如果存在文件则通过file_loadfile载入内存，注册gdt，然后跳转执行。<br>　　现在假设操作系统没有任何防备，看看应用程序能够做些什么来破坏操作系统。</p>
+<ul>
+<li><p><strong>1.语言直接修改内存数值。</strong><br>　　这是C语言的特性，在操作系统没限制的条件下，可以通过指针修改任意内存的值。<br>这个本来应该是操作系统的权力。在实现操作系统的时候可以通过在一些内存中写入来保存数据，把数据当全局变量来用。这个在之前的内容中也用到过。但是如果是外部的软件，当然不可能给予它这么大的权限，所以需要把所有软件中的非法内存操作给禁止。<br>　　<strong>解决方法：</strong>专门给应用程序分配数据段，限制应用程序修改的数据范围。如果应用程序需要调用系统函数，则在执行系统函数之前先把段地址切换到操作系统所在段再执行。执行好之后回到应用程序段，切换段以及执行api的操作由操作系统提供，只需要再对应用程序对api给的参数进行合法性校检就可以了。</p>
+</li>
+<li><p><strong>2.用汇编写第三方程序，忽略操作系统指定的数据段。</strong><br>　　这个是上面的解决方法的漏洞。c语言编译之后会用系统提供的段，但是汇编更强大，可以自己选定段进行数据修改。<br>　　<strong>解决方法：</strong>让应用程序无法访问操作系统的段。在软件的数据段和代码段上的访问权限加上0x60,这样可以将段设置为应用程序用。该段中的代码如果要访问操作系统所在段代码是非法的。这个0x60是x86架构中提供的，在现在的操作系统中只需要设定好久行了，不需要编写额外的代码。处于好奇，我去查了一下arm，里面有一个MMU,也可以设定访问权限，功能与x86类似。看来这部分内容在操作系统中至关重要，在处理器架构上面就已经把这个问题考虑清楚了。<br>　　申明段为应用程序段之后还有其它的一系列好处，比如应用程序不能够直接执行IN和OUT指令，这样可以防止应用程序更改定时器的周期，让定时器运行缓慢。除了这个，在应用程序中，也不能够执行CLI、STI和HLT之类的指令，这些指令在操作系统看来都是危险的，所以0x60的设置极大地提高了系统的安全性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//代码段</div><div class="line">set_segmdesc(gdt + 1003, finfo-&gt;size - 1, (int) p, AR_CODE32_ER + 0x60);</div><div class="line">//数据段</div><div class="line">set_segmdesc(gdt + 1004, segsiz - 1,      (int) q, AR_DATA32_RW + 0x60);</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>3.破坏应用程序所在段中的数据。</strong><br>　　应用程序不能够对操作系统的段进行修改，所以篡改操作系统是没用的了。但是可以篡改应用程序所在段的内容，让其它应用程序无法正常运行。对于CPU来说，应用程序访问应用程序所在段应该是理所当然的。但是这的确西药改进，如果操作系统中的应用程序很容易受到其它应用程序的干扰，而操作系统对此也不能够做些什么，那这个操作系统也是失败的操作系统。<br>　　<strong>解决方法：</strong>由gdt可以得到一些启示，可以动态修改gdt设置，把正在运行的程序gdt设置为应用程序段，把不在运行的程序设置为操作系统段。这样的话如果运行的应用程序想要破坏其它应用程序，那也只能够破坏和它同时运行的应用程序，大大降低了危害。但是这样有很多缺点，比如说一个程序就要用好几个gdt，而且每次更改起来也比较麻烦。<br>其实对于这个问题，CPU已经准备好了解决的方案。就是LDT。我们知道，GDT是全局段描述符表，而LDT则是局部段描述符表。每个LDT都是互相独立的，不能够访问各自的资源。所以只需要把应用程序设置在LDT中，这样其它应用程序就不能够访问该应用程序的段，保证了数据的安全。设定LDT也很简单，只需要在任务的tss中给成员变量ldtr赋相应值就可以了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//设定ldtr</div><div class="line">taskctl-&gt;tasks0[i].tss.ldtr = (TASK_GDT0 + MAX_TASKS + i) * 8;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>　　<strong>最后来谈一下对一些破坏性程序的处理。</strong><br>　　作为一个可用的操作系统，如果应用程序具有破坏性，那么运行之后就应该做到适当的提示，以及能够强制关闭应用程序，不要让它继续占用内存和CPU。这样操作系统才能够更加稳定。<br>　　对于一些恶意代码，比如在应用程序中修改操作系统段的数据，或者在应用程序中执行STI等操作，由于我之前设定过0x60的段权限，应用程序会自动产生0x0d中断（异常中断），在这个中断中，我可以写一些代码来关闭应用程序做好善后工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">//0x0d中断之后调用asm_inhandler0d函数</div><div class="line">set_gatedesc(idt + 0x0d, (int) asm_inthandler0d, 2 * 8, AR_INTGATE32);</div><div class="line"></div><div class="line">;中断调用汇编函数</div><div class="line">_asm_inthandler0d:</div><div class="line">    STI</div><div class="line">    PUSH	ES</div><div class="line">    PUSH	DS</div><div class="line">    PUSHAD</div><div class="line">    MOV		EAX,ESP</div><div class="line">    PUSH	EAX</div><div class="line">    MOV		AX,SS</div><div class="line">    MOV		DS,AX</div><div class="line">    MOV		ES,AX</div><div class="line">    ;调用inthandler0d显示异常</div><div class="line">    CALL	_inthandler0d</div><div class="line">    CMP		EAX,0</div><div class="line">    JNE		_asm_end_app		</div><div class="line">    POP		EAX</div><div class="line">    POPAD</div><div class="line">    POP		DS</div><div class="line">    POP		ES</div><div class="line">    ; INT 0x0d 中需要这句</div><div class="line">    ADD		ESP,4</div><div class="line">    ;返回操作系统</div><div class="line">    IRETD</div><div class="line"></div><div class="line">//_asm_inthandler0d调用</div><div class="line">int *inthandler0d(int *esp)</div><div class="line">&#123;</div><div class="line">    struct CONSOLE *cons = (struct CONSOLE *) *((int *) 0x0fec);</div><div class="line">    struct TASK *task = task_now();</div><div class="line">    char s[30];</div><div class="line">    //在终端中显示异常</div><div class="line">    cons_putstr0(cons, &quot;\nINT 0D :\n General Protected Exception.\n&quot;);</div><div class="line">    sprintf(s, &quot;EIP = %08X\n&quot;, esp[11]);</div><div class="line">    cons_putstr0(cons, s);</div><div class="line">    //强制结束程序</div><div class="line">    return &amp;(task-&gt;tss.esp0);	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　现在再来回顾一下操作系统，只要其内部稳定，基本上就很难被外部程序给干扰。因为操作系统和程序已经隔离。应用程序不能够破坏操作系统数据，如果要高权限操作，应用程序可以调用操作系统公开的api来完成。同时应用程序和应用程序间也独立，互不干扰。这样的操作系统才能经受住考验。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/06/26/Notes/System-Protection/" data-id="cj4mgqua9002tnw510ycsr1go" class="article-share-link" data-share="baidu" data-title="System Protection">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/06/26/Notes/System-Protection/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/System/">System</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Notes/redis-notes1-sds" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/31/Notes/redis-notes1-sds/" class="article-date">
+  <time datetime="2015-05-31T19:05:44.000Z" itemprop="datePublished">5月 31 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Notes/">Notes</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/31/Notes/redis-notes1-sds/">redis notes1 sds</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>redis使用一个sds来表示一个字符串<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">struct sdshdr &#123;</div><div class="line">    int len;</div><div class="line">    int free;</div><div class="line">    char buf[];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>###不用C字符串的原因</p>
+<ul>
+<li>C字符串不能满足要求,是因为C字符串不能够记录自身的长度,获取其长度的复杂度是O(n)<br>sdshdr用空间换时间,直接用len标记了字符串的长度</li>
+<li>C字符串不记录自身长度,容易造成缓冲区溢出,strcat会假定第一个参数有足够多的内存,sds则会自动检查并扩展字符串大小</li>
+<li>C字符串因为没有记录长度,所以不能保存’\0’,而sds是二进制安全的</li>
+</ul>
+<p>不停地重分配内存性能会损失很多,redis的sds实现了空间预分配和惰性空间释放两种优化策略</p>
+<ul>
+<li><p>预分配</p>
+<ul>
+<li>sds如果修改之后小于1mb,则分配和len属性同样大小的未使用空间</li>
+<li>如果修改之后,大于等于1mb,程序会分配1mb未使用空间</li>
+</ul>
+</li>
+<li><p>惰性空间释放</p>
+<ul>
+<li>sdstrim之后不释放空间</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sds - sizeof(struct sdshdr) 就是sdshdr地址</div><div class="line">realloc(sh, sizeof(struct sdshdr)+sh-&gt;len+1);//释放free的内存</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/05/31/Notes/redis-notes1-sds/" data-id="cj4mgqual003anw51vqeuyn7f" class="article-share-link" data-share="baidu" data-title="redis notes1 sds">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/05/31/Notes/redis-notes1-sds/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Mess/最近的一些记录15-5-17" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/17/Mess/最近的一些记录15-5-17/" class="article-date">
+  <time datetime="2015-05-18T00:00:47.000Z" itemprop="datePublished">5月 17 2015</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mess/">Mess</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/17/Mess/最近的一些记录15-5-17/">最近的一些记录15-5-17</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近学了一下Flask，感觉这类东西使用起来还是差不多的。<br>以前感觉python应用部署起来比较麻烦，其实部署过之后还是蛮简单的。</p>
+<p>virtualenv真是神器，可以创建独立的python环境。<br>其实在没接触到这个之前一直是直接装在原始环境中的，pip还老是遇到permission问题，要sudo.  </p>
+<p>最近把windows上的virtualbox更新了一下，原来用的是绿色版，但是那个网络的服务老是报异常，需要卸载再安装一遍。比较麻烦所以索性换掉了。virtualbox下mount的地方使用virtualenv会遇到permission error的问题，应该是virtualbox的bug.</p>
+<p>virtualbox里面的debian感觉x-windows不怎么需要，所以直接取消启动了，为了粘贴方便，迫不得已装了一个openbox.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//配置linux启动项，把gdm给删掉</div><div class="line">sudo apt-get install rcconf</div><div class="line">sudo rcconf</div><div class="line">//配置startx默认启动openbox</div><div class="line">update-alternatives --config x-session-manager</div></pre></td></tr></table></figure></p>
+<p>pip在装一些软件的时候会少一些东西，一般装上python-dev和mysql-dev(好像不叫这个名字)就可以了</p>
+<p>还有些pip下载慢，需要代理，可以用proxychains4，不能够直接apt-get装，装了好像有问题，可以直接clone <a href="https://github.com/rofl0r/proxychains-ng" target="_blank" rel="external">https://github.com/rofl0r/proxychains-ng</a> 编译安装。</p>
+<p>赞一下aptitude很好用啊。可以给你几个选项来解决依赖问题。十分方便。</p>
+<p>要在windows上用virtualbox实在是有点麻烦，只是现在有个项目还要用到myeclipse和vc++,不然就可以完全转到linux下工作了。</p>
+<p>linux查看端口占用信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">netstat -ntpl	//查看端口占用</div></pre></td></tr></table></figure></p>
+<p>mosh这个软件很好用，没有代理的情况下访问vps速度飞快。<br>但是windows上就只有Cygwin和chrome上有。<br>Cygwin不太想装。chrome上面有时候会出现载入一个module时卡住的问题，google了一下好像是bug，暂时无解。希望能改善。<br>使用mosh一定要两边的字符集一样，不然会报错误。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">//设置debian字符集为utf-8</div><div class="line">debian:~# apt-get install locales</div><div class="line">debian:~# dpkg-reconfigure locales</div><div class="line">debian:~# locale</div><div class="line">export LC_ALL=en_US.utf8</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://messyidea.com/2015/05/17/Mess/最近的一些记录15-5-17/" data-id="cj4mgqua5002nnw51l46risx1" class="article-share-link" data-share="baidu" data-title="最近的一些记录15-5-17">分享到</a>
+      
+
+      
+        <a href="http://messyidea.com/2015/05/17/Mess/最近的一些记录15-5-17/#disqus_thread" class="article-comment-link">评论</a>
+      
+
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">下一页 &raquo;</a>
+  </nav>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Algorithm/">Algorithm</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Life/">Life</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux-C/">Linux C</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mess/">Mess</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Notes/">Notes</a><span class="category-list-count">12</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Opengrok/">Opengrok</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/System/">System</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Warming/">Warming</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aria2c/">aria2c</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gogs/">gogs</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/let-s-entrypt/">let's entrypt</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life-now/">life now</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssl/">ssl</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tools/">tools</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/交叉编译/">交叉编译</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树/">树</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/树莓派/">树莓派</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/线段树/">线段树</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Opengrok/" style="font-size: 10px;">Opengrok</a> <a href="/tags/System/" style="font-size: 10px;">System</a> <a href="/tags/Warming/" style="font-size: 20px;">Warming</a> <a href="/tags/aria2c/" style="font-size: 10px;">aria2c</a> <a href="/tags/gdb/" style="font-size: 10px;">gdb</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/gogs/" style="font-size: 10px;">gogs</a> <a href="/tags/let-s-entrypt/" style="font-size: 10px;">let's entrypt</a> <a href="/tags/life-now/" style="font-size: 10px;">life now</a> <a href="/tags/ssl/" style="font-size: 10px;">ssl</a> <a href="/tags/tools/" style="font-size: 10px;">tools</a> <a href="/tags/交叉编译/" style="font-size: 10px;">交叉编译</a> <a href="/tags/树/" style="font-size: 10px;">树</a> <a href="/tags/树莓派/" style="font-size: 10px;">树莓派</a> <a href="/tags/线段树/" style="font-size: 10px;">线段树</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">三月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">七月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">四月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">三月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">一月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">十二月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/11/">十一月 2014</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/03/Hasee-Z7-sl7d3-archlinux-安装教程/">Hasee Z7 sl7d3 archlinux 安装笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/17/git-repo-永久删除大文件/">git repo 永久删除大文件</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/29/Linux-的-ACL/">Linux 的 ACL</a>
+          </li>
+        
+          <li>
+            <a href="/2016/08/20/Opengrok-优秀的代码阅读工具/">Opengrok 优秀的代码阅读工具</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/01/交叉编译树莓派的-aria2c/">交叉编译树莓派的 aria2c</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 messyidea<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/Projects" class="mobile-nav-link">Projects</a>
+  
+    <a href="/about" class="mobile-nav-link">About</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+<script>
+  var disqus_shortname = 'messyidea';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
